@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Sender</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        .flash-message { padding: 10px; margin-bottom: 20px; background-color: #f44336; color: white; }
+        .success { background-color: #4CAF50; }
+        .info-box { background-color: #f2f8ff; border-left: 4px solid #1877f2; padding: 10px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Facebook Security Email Sender</h1>
+    <p><em>For educational purposes and penetration testing only</em></p>
+
+    <div class="info-box">
+        <p><strong>Note:</strong> This tool is configured to send Facebook security alert themed emails. The recipient's first name will be automatically extracted from the recipient name or email field.</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {% if category == 'success' %}success{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="post" action="{{ url_for('send_email') }}">
+        <div class="form-group">
+            <label for="template">Email Template:</label>
+            <select name="template" id="template">
+                {% for template in templates %}
+                    <option value="{{ template }}">{{ template }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="smtp_server">SMTP Server:</label>
+            <input type="text" name="smtp_server" id="smtp_server" value="{{ smtp_server }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="smtp_port">SMTP Port:</label>
+            <input type="number" name="smtp_port" id="smtp_port" value="{{ smtp_port }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="from_email">From Email:</label>
+            <input type="email" name="from_email" id="from_email" placeholder="security@facebook-mail.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="from_name">From Name (Display Name):</label>
+            <input type="text" name="from_name" id="from_name" placeholder="Facebook Security" value="Facebook Security">
+        </div>
+
+        <div class="form-group">
+            <label for="to_email">To Email:</label>
+            <input type="email" name="to_email" id="to_email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="subject">Subject:</label>
+            <input type="text" name="subject" id="subject" value="Security Alert: Unusual Activity Detected on Your Facebook Account" required>
+        </div>
+
+        <div class="form-group">
+            <label for="recipient_name">Recipient Name (for personalization):</label>
+            <input type="text" name="recipient_name" id="recipient_name" placeholder="If left empty, name will be extracted from email">
+        </div>
+
+        <div class="form-group">
+            <label for="action_url">Action URL (where the button will link to):</label>
+            <input type="text" name="action_url" id="action_url" value="http://35.199.187.218/" required>
+            <small>This is the URL where victims will be directed when clicking the button</small>
+        </div>
+
+        <button type="submit">Preview & Send Email</button>
+    </form>
+</body>
+</html>
+    
